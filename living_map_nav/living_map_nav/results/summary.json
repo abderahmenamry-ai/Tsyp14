@@ -1,0 +1,27 @@
+{
+  "stop_reason": "returned to start after full exploration",
+  "sim_time_s": 448.1,
+  "distance_travelled_m": 146.2,
+  "slam_err_mean_m": 0.144,
+  "slam_err_max_m": 0.281,
+  "slam_err_final_m": 0.281,
+  "odometry_only_err_final_m": 4.158,
+  "wall_collision_ticks": 0,
+  "beacons": [
+    {
+      "kind": "worker",
+      "t": 73.6,
+      "error_m": 0.075
+    },
+    {
+      "kind": "collapse",
+      "t": 153.4,
+      "error_m": 0.135
+    },
+    {
+      "kind": "gas",
+      "t": 397.0,
+      "error_m": 0.228
+    }
+  ]
+}

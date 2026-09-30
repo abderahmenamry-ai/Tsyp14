@@ -1,0 +1,47 @@
+pybullet build time: Sep 29 2026 23:04:21
+t=   0.1s state=FOLLOW    dist=   0.0 m pos_err=0.00 m  (wall 0s)
+t=  30.0s state=FOLLOW    dist=  10.2 m pos_err=0.06 m  (wall 5s)
+t=  60.0s state=FOLLOW    dist=  20.9 m pos_err=0.11 m  (wall 10s)
+  [beacon] worker   t=  73.6s  est=(11.31,-8.45) true=(11.25,-8.41)  error=0.08 m
+t=  90.1s state=FOLLOW    dist=  29.4 m pos_err=0.11 m  (wall 15s)
+t= 120.1s state=FOLLOW    dist=  40.0 m pos_err=0.07 m  (wall 20s)
+t= 150.1s state=FOLLOW    dist=  50.8 m pos_err=0.11 m  (wall 24s)
+  [beacon] collapse t= 153.4s  est=(25.61,-1.07) true=(25.50,-1.15)  error=0.13 m
+t= 180.1s state=FOLLOW    dist=  58.6 m pos_err=0.17 m  (wall 29s)
+t= 210.1s state=FOLLOW    dist=  67.3 m pos_err=0.21 m  (wall 34s)
+t= 240.1s state=FOLLOW    dist=  76.6 m pos_err=0.16 m  (wall 39s)
+t= 270.1s state=FOLLOW    dist=  87.8 m pos_err=0.07 m  (wall 44s)
+t= 300.1s state=FOLLOW    dist=  97.7 m pos_err=0.15 m  (wall 49s)
+t= 330.0s state=FOLLOW    dist= 106.6 m pos_err=0.15 m  (wall 54s)
+t= 360.0s state=FOLLOW    dist= 116.2 m pos_err=0.12 m  (wall 60s)
+t= 390.0s state=FOLLOW    dist= 128.3 m pos_err=0.26 m  (wall 64s)
+  [beacon] gas      t= 397.0s  est=(6.20,4.98) true=(6.40,4.87)  error=0.23 m
+t= 420.0s state=FOLLOW    dist= 135.8 m pos_err=0.25 m  (wall 70s)
+stopped: returned to start after full exploration
+{
+  "stop_reason": "returned to start after full exploration",
+  "sim_time_s": 448.1,
+  "distance_travelled_m": 146.2,
+  "slam_err_mean_m": 0.144,
+  "slam_err_max_m": 0.281,
+  "slam_err_final_m": 0.281,
+  "odometry_only_err_final_m": 4.158,
+  "wall_collision_ticks": 0,
+  "beacons": [
+    {
+      "kind": "worker",
+      "t": 73.6,
+      "error_m": 0.075
+    },
+    {
+      "kind": "collapse",
+      "t": 153.4,
+      "error_m": 0.135
+    },
+    {
+      "kind": "gas",
+      "t": 397.0,
+      "error_m": 0.228
+    }
+  ]
+}

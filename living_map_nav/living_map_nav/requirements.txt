@@ -1,0 +1,6 @@
+numpy
+matplotlib
+pillow
+pybullet
+# BreezySLAM is not on PyPI. Install from source (needs a C compiler):
+#   git clone https://github.com/simondlevy/BreezySLAM.git && cd BreezySLAM/python && pip install .
