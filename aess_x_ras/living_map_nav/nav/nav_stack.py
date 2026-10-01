@@ -22,13 +22,13 @@ from .events import EventSimulator
 
 
 class NavStack:
-    def __init__(self, cfg=None, gui=False, events=True):
+    def __init__(self, cfg=None, gui=False, events=True, controller=None):
         self.cfg = cfg or Config()
         self.world = MineWorld(self.cfg, gui=gui)
         self.lidar = SimLidar(self.world, self.cfg)
         self.odom = Odometry(self.cfg)
         self.slam = SlamNode(self.cfg)
-        self.explorer = WallFollower(self.cfg, self.lidar)
+        self.explorer = controller or WallFollower(self.cfg, self.lidar)
         self.events = EventSimulator() if events else None
         self.t = 0.0
         self.v = self.w = 0.0
