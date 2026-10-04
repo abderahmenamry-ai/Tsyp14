@@ -26,6 +26,12 @@ enum PriorityLevel : uint8_t {
 static const uint8_t  TTL_BY_PRIORITY[3]       = { 5, 12, 20 };
 static const uint32_t REBROADCAST_MS[3]        = { 10000, 5000, 2000 };
 
+// Message aging: one TTL unit is lost every AGING_TICK_MS of mission time since
+// the beacon was written, so a beacon lives ttl * AGING_TICK_MS
+// (LOW 150 s, MEDIUM 360 s, HIGH 600 s). Rebroadcast interval only controls how
+// often a live beacon is re-sent. All nodes share one mission clock.
+static const uint32_t AGING_TICK_MS            = 30000;
+
 #pragma pack(push, 1)
 struct BeaconMessage {
   uint8_t  beacon_id;     // unique ID for this beacon
@@ -37,7 +43,7 @@ struct BeaconMessage {
   uint8_t  heading;       // 0-255 mapped to 0-360 degrees
   uint16_t sensor_value;  // raw sensor reading (gas ppm, vibration magnitude, etc.)
   uint32_t timestamp_ms;  // ms since mission start
-  uint8_t  ttl;           // aging counter, decremented each rebroadcast
+  uint8_t  ttl;           // initial lifetime in aging ticks (see AGING_TICK_MS)
 };
 #pragma pack(pop)  // 16 bytes total
 
@@ -71,6 +77,17 @@ inline BeaconMessage makeBeacon(uint8_t beacon_id, uint8_t writer_id,
   msg.timestamp_ms = timestamp_ms;
   msg.ttl          = TTL_BY_PRIORITY[msg.priority];
   return msg;
+}
+
+// TTL units left at mission time nowMs (0 = expired). Mirrors beacon.py::ttl_remaining.
+inline uint8_t ttlRemaining(const BeaconMessage &msg, uint32_t nowMs) {
+  uint32_t elapsed = (nowMs > msg.timestamp_ms) ? (nowMs - msg.timestamp_ms) : 0;
+  uint32_t lost = elapsed / AGING_TICK_MS;
+  return (lost >= msg.ttl) ? 0 : (uint8_t)(msg.ttl - lost);
+}
+
+inline bool isExpired(const BeaconMessage &msg, uint32_t nowMs) {
+  return ttlRemaining(msg, nowMs) == 0;
 }
 
 #endif // BEACON_PROTOCOL_H

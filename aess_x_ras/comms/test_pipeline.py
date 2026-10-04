@@ -12,17 +12,18 @@ run_integration_demo.py instead.
 Run with: python test_pipeline.py
 """
 
-from beacon import EventType, make_beacon
+from beacon import EventType, make_beacon, is_expired
 from outside_network import OutsideNetworkNode, CalibrationData
 from command_post import CommandPost
 from executor_mission import ExecutorMission
 
 # Fake trigger zones for this isolated test only (not the real mine layout -
 # see living_map_nav/nav/sim_world.py::EVENT_ZONES for that)
+# The fake robot drives along y = 0, so the zones must sit on y = 0 to be hit.
 DEMO_TRIGGER_ZONES = [
-    (3.0, 0.1, 0.4, EventType.GAS, 420),
-    (6.0, -0.2, 0.4, EventType.COLLAPSE, 780),
-    (9.0, 0.15, 0.4, EventType.TRAPPED, 1),
+    (3.0, 0.0, 0.4, EventType.GAS, 420),
+    (6.0, 0.0, 0.4, EventType.COLLAPSE, 780),
+    (9.5, 0.0, 0.4, EventType.TRAPPED, 1),
 ]
 
 
@@ -56,9 +57,38 @@ def main():
     print("\n--- Live map ---")
     print(command_post.live_map_summary())
 
+    # 1. every zone must have produced a beacon that reached the command post
+    assert len(command_post.received) == 3, f"expected 3 beacons, got {len(command_post.received)}"
+
+    # 2. mission order: high priority first (freshest first within a priority), gas last
+    order = [b.event_type for b, _ in command_post.build_mission()]
+    assert order == [EventType.TRAPPED, EventType.COLLAPSE, EventType.GAS], order
+
+    # 3. frame translation: a beacon 3 m "forward" with heading offset 90 deg (east)
+    #    must land east of the entrance (same latitude, larger longitude)
+    gas_beacon, gas_gps = command_post.received[0]
+    assert abs(gas_gps.lat - calibration.entry_lat) < 1e-5
+    assert gas_gps.lon > calibration.entry_lon
+
+    # 4. aging: a routine marker written at t=0 (TTL 5 ticks = 150 s) must expire
+    #    before an urgent beacon (TTL 20 ticks = 600 s) written at the same time
+    low = make_beacon(10, 1, EventType.EXPLORED, 0, 0, 0, 0, 0)
+    high = make_beacon(11, 1, EventType.TRAPPED, 0, 0, 0, 1, 0)
+    assert not is_expired(low, 149_000) and is_expired(low, 150_000)
+    assert not is_expired(high, 599_000) and is_expired(high, 600_000)
+    command_post.now_ms = 200_000
+    outside_network.receive_beacon(low)
+    outside_network.receive_beacon(high)
+    assert command_post.status_of(low) == "expired" and command_post.status_of(high) == "pending"
+    assert low.beacon_id not in [b.beacon_id for b, _ in command_post.build_mission()]
+    # remove the extra beacons again before the mission walk-through below
+    command_post.received = command_post.received[:3]
+    command_post.now_ms = None
+
     print("\n--- Executor working the mission ---")
     executor = ExecutorMission(command_post)
     executor.receive_mission()
+    visited = 0
     while True:
         target = executor.next_target()
         if target is None:
@@ -68,6 +98,9 @@ def main():
         print(f"Executor -> beacon #{beacon.beacon_id} ({beacon.event_type.name}, "
               f"priority={beacon.priority.name}) at ({gps.lat:.6f}, {gps.lon:.6f})")
         executor.reached_target()
+        visited += 1
+    assert visited == 3, visited
+    print("\nALL CHECKS PASSED")
 
 
 if __name__ == "__main__":
