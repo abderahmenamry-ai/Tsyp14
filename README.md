@@ -44,7 +44,7 @@ python run_integration_demo_v2.py       # Writer + Executor end to end -> comms/
 | Writer mission | about 448 s simulated, about 146 m driven, returned to start, 0 wall contacts, all 3 event zones reached |
 | Writer position error vs ground truth | mean 0.14 m, max 0.28 m (odometry alone ends 4-8 m off) |
 | Beacon position error | 0.08 m (worker), 0.13 m (collapse), 0.23 m (gas) |
-| Executor mission | visits 3 of 3 beacons in priority order (about 150 s simulated, 0 planning failures); also 3 of 3 on seeds 1-3 |
+| Executor mission | visits 3 of 3 beacons in priority order (148 s simulated, 63 m driven, max position error 0.31 m); also 3 of 3 on seeds 1-3 |
 
 Demo recordings: `aess_x_ras/living_map_nav/results/demo.gif` (Writer) and `aess_x_ras/comms/results/integrated_demo.gif` (Writer, command post and Executor together).
 

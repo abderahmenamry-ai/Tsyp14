@@ -109,5 +109,5 @@ demonstrating the practical necessity of the SLAM approach for this environment.
 
 Full Writer + Executor run (default seed): the Writer's three beacons reach the command post
 with translated GPS coordinates, and the Executor then visits all 3 of 3 in priority order
-(about 150 s simulated, about 63 m driven, 96 path plans, 0 planning failures). On seeds 1-3
+(148 s simulated, 63 m driven, maximum position error 0.31 m, 0 planning failures). On seeds 1-3
 the Executor also visits 3 of 3, with a maximum position error of 0.23-0.26 m.
