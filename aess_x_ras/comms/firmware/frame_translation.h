@@ -25,7 +25,7 @@ static const double METERS_PER_DEG_LAT = 111320.0;
 struct CalibrationData {
   double entryLat;          // GPS latitude at the Writer's local origin
   double entryLon;          // GPS longitude at the Writer's local origin
-  double headingOffsetDeg;  // compass bearing of the Writer's local +X axis (forward), clockwise from North
+  double headingOffsetDeg;  // compass bearing of the Writer's local +X axis (forward), clockwise from North; local +Y is to the LEFT
 };
 
 // Converts a beacon's local coordinates into a real-world GPS coordinate.
@@ -34,9 +34,9 @@ inline GPSCoord translateToGPS(const BeaconMessage &msg, const CalibrationData &
   double y_m = msg.y_coord_cm / 100.0;
   double theta = cal.headingOffsetDeg * M_PI / 180.0;
 
-  // Rotate local (forward=x, right=y) into world (North, East) offsets
-  double northOffset_m = x_m * cos(theta) - y_m * sin(theta);
-  double eastOffset_m  = x_m * sin(theta) + y_m * cos(theta);
+  // Rotate local (x = forward, y = LEFT, the SLAM frame) into world (North, East) offsets
+  double northOffset_m = x_m * cos(theta) + y_m * sin(theta);
+  double eastOffset_m  = x_m * sin(theta) - y_m * cos(theta);
 
   double deltaLat = northOffset_m / METERS_PER_DEG_LAT;
   double deltaLon = eastOffset_m / (METERS_PER_DEG_LAT * cos(cal.entryLat * M_PI / 180.0));

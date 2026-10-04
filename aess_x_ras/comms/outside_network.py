@@ -28,13 +28,18 @@ class GPSCoord:
 
 
 def translate_to_gps(beacon, cal: CalibrationData) -> GPSCoord:
-    """Flat-earth approximation - accurate at tunnel/mine scale."""
+    """Flat-earth approximation - accurate at tunnel/mine scale.
+
+    Local frame = the SLAM frame: x forward (the heading at the entrance), y to the LEFT
+    (counter-clockwise positive). heading_offset_deg is the compass bearing of local +x,
+    clockwise from North.
+    """
     x_m = beacon.x_coord_cm / 100.0
     y_m = beacon.y_coord_cm / 100.0
     theta = math.radians(cal.heading_offset_deg)
 
-    north_offset_m = x_m * math.cos(theta) - y_m * math.sin(theta)
-    east_offset_m = x_m * math.sin(theta) + y_m * math.cos(theta)
+    north_offset_m = x_m * math.cos(theta) + y_m * math.sin(theta)
+    east_offset_m = x_m * math.sin(theta) - y_m * math.cos(theta)
 
     delta_lat = north_offset_m / METERS_PER_DEG_LAT
     delta_lon = east_offset_m / (METERS_PER_DEG_LAT * math.cos(math.radians(cal.entry_lat)))

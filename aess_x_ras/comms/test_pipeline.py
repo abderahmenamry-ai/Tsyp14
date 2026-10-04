@@ -13,7 +13,7 @@ Run with: python test_pipeline.py
 """
 
 from beacon import EventType, make_beacon, is_expired
-from outside_network import OutsideNetworkNode, CalibrationData
+from outside_network import OutsideNetworkNode, CalibrationData, translate_to_gps
 from command_post import CommandPost
 from executor_mission import ExecutorMission
 
@@ -69,6 +69,15 @@ def main():
     gas_beacon, gas_gps = command_post.received[0]
     assert abs(gas_gps.lat - calibration.entry_lat) < 1e-5
     assert gas_gps.lon > calibration.entry_lon
+
+    # 3b. y axis: SLAM frame has +y to the LEFT. Facing east (heading 90), 5 m ahead and 5 m
+    #     left must be 5 m NORTH and 5 m EAST of the entrance (regression test for a mirrored map)
+    import math
+    left = make_beacon(20, 1, EventType.GAS, 500, 500, 0, 0, 0)
+    g = translate_to_gps(left, calibration)
+    north_m = (g.lat - calibration.entry_lat) * 111320.0
+    east_m = (g.lon - calibration.entry_lon) * 111320.0 * math.cos(math.radians(calibration.entry_lat))
+    assert abs(north_m - 5.0) < 0.05 and abs(east_m - 5.0) < 0.05, (north_m, east_m)
 
     # 4. aging: a routine marker written at t=0 (TTL 5 ticks = 150 s) must expire
     #    before an urgent beacon (TTL 20 ticks = 600 s) written at the same time
