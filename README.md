@@ -63,7 +63,7 @@ Demo recordings: `aess_x_ras/living_map_nav/results/demo.gif` (Writer) and `aess
 - **Robot hardware, firmware and communication:** `aess_x_ras/architecture/robot_architecture.pdf` (parts, wiring, protocols, state machine, safety layer) and the code in `aess_x_ras/firmware/` and `aess_x_ras/base_station/`
 - **Implementation plan (Phase 2 roadmap):** `aess_x_ras/architecture/implementation_plan.pdf`
 - **Failure cases:** `aess_x_ras/architecture/failure_cases.pdf`
-- **Short technical report (max 6 pages):** compiled from the sections above
+- **Short technical report (max 6 pages):** aess_x_ras/architecture/technical_report.pdf
 
 ## Known limitations
 
