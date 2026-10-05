@@ -19,6 +19,10 @@ Writer robot navigation/SLAM).
 | `firmware/beacon_protocol.h` | C header for the real ESP32 firmware (Phase 2) |
 | `firmware/frame_translation.h` | C header for the real outside-network node firmware (Phase 2) |
 
+The ESP32 firmware that sends and receives these beacons lives in `../firmware/` (it includes
+`firmware/beacon_protocol.h` and `frame_translation.h` from this folder), and the Python side that
+connects it to the command post is `../base_station/`.
+
 ## Run
 
 Quick sanity check (no dependencies beyond this package). It now asserts that all

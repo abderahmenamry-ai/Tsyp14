@@ -19,8 +19,10 @@ All robot <-> command-post traffic passes through the Outside Network node; ther
 | Folder | What is in it |
 |---|---|
 | `aess_x_ras/living_map_nav/` | Simulation and navigation: PyBullet mine, simulated 2D LiDAR, BreezySLAM, Writer wall-following explorer, Executor goal-seeking controller (A*), results and plots |
-| `aess_x_ras/comms/` | Beacon format and aging, Outside Network node (frame translation), Command Post and live map, Executor mission logic, ESP32 firmware headers, integration demo |
-| `aess_x_ras/architecture/` | Report sections and diagrams: architecture, sensor research, implementation plan, failure cases |
+| `aess_x_ras/comms/` | Beacon format and aging, Outside Network node (frame translation), Command Post and live map, Executor mission logic, integration demo |
+| `aess_x_ras/firmware/` | **Robot firmware (ESP32, C++)** for the Writer, Executor and outside-network node: drive control, odometry, LiDAR parsing, event detectors, safety layer, nRF24 reliability, plus unit tests and a software-in-the-loop simulation |
+| `aess_x_ras/base_station/` | SLAM host (Python): speaks the firmware's host link and connects it to BreezySLAM, the controllers and the command post |
+| `aess_x_ras/architecture/` | Report sections and diagrams: architecture, **robot hardware / firmware / communication**, sensor research, implementation plan, failure cases |
 
 ## Quick start
 
@@ -35,6 +37,10 @@ python run_demo.py                      # Writer only: writes results/ (GIF, map
 cd ../comms
 python test_pipeline.py                 # fast checks of the beacon/comms pipeline (no PyBullet)
 python run_integration_demo_v2.py       # Writer + Executor end to end -> comms/results/
+
+# robot firmware: unit tests, behaviour tests, ESP32 syntax check, full mission with the firmware in the loop
+cd ../firmware
+make test && make check-esp32 && make sil
 ```
 
 ## Results (simulation, default seed)
@@ -44,7 +50,8 @@ python run_integration_demo_v2.py       # Writer + Executor end to end -> comms/
 | Writer mission | about 448 s simulated, about 146 m driven, returned to start, 0 wall contacts, all 3 event zones reached |
 | Writer position error vs ground truth | mean 0.14 m, max 0.28 m (odometry alone ends 4-8 m off) |
 | Beacon position error | 0.08 m (worker), 0.13 m (collapse), 0.23 m (gas) |
-| Executor mission | visits 3 of 3 beacons in priority order (148 s simulated, 63 m driven, max position error 0.31 m); also 3 of 3 on seeds 1-3 |
+| Executor mission | visits 3 of 3 beacons in priority order (136 s simulated, 63 m driven, max position error 0.28 m, 0 wall contacts); also 3 of 3 on seeds 1-3 |
+| Full system with the real firmware in the loop | Writer: mean error 0.25 m, max 0.45 m, 0 wall contacts; 3 beacons acknowledged and delivered; Executor visits 3 of 3 (144 s, max error 0.26 m). Same result with 50 % radio loss |
 
 Demo recordings: `aess_x_ras/living_map_nav/results/demo.gif` (Writer) and `aess_x_ras/comms/results/integrated_demo.gif` (Writer, command post and Executor together).
 
@@ -53,6 +60,7 @@ Demo recordings: `aess_x_ras/living_map_nav/results/demo.gif` (Writer) and `aess
 - **Simulation demo:** `living_map_nav/` and `comms/run_integration_demo_v2.py`
 - **Technical solution and architecture:** `aess_x_ras/architecture/architecture_section.md` and the diagrams in the same folder
 - **Sensor research:** `aess_x_ras/architecture/sensor_research.pdf` (MQ-2 gas, SW-520D tilt, HC-SR501 PIR)
+- **Robot hardware, firmware and communication:** `aess_x_ras/architecture/robot_architecture.pdf` (parts, wiring, protocols, state machine, safety layer) and the code in `aess_x_ras/firmware/` and `aess_x_ras/base_station/`
 - **Implementation plan (Phase 2 roadmap):** `aess_x_ras/architecture/implementation_plan.pdf`
 - **Failure cases:** `aess_x_ras/architecture/failure_cases.pdf`
 - **Short technical report (max 6 pages):** compiled from the sections above

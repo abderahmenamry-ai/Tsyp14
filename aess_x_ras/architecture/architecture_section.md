@@ -109,5 +109,16 @@ demonstrating the practical necessity of the SLAM approach for this environment.
 
 Full Writer + Executor run (default seed): the Writer's three beacons reach the command post
 with translated GPS coordinates, and the Executor then visits all 3 of 3 in priority order
-(148 s simulated, 63 m driven, maximum position error 0.31 m, 0 planning failures). On seeds 1-3
-the Executor also visits 3 of 3, with a maximum position error of 0.23-0.26 m.
+(136 s simulated, 63 m driven, maximum position error 0.28 m, no wall contacts). On seeds 1-3
+the Executor also visits 3 of 3 (135-137 s, maximum error 0.27-0.32 m, no wall contacts).
+
+With the real ESP32 firmware code in the loop (wheel PID, odometry, LiDAR packets, event
+detectors, radio retries; see `robot_architecture.md`) the Writer's mean position error is
+0.25 m (maximum 0.45 m), and the Executor again visits 3 of 3, also when half of all radio
+sends fail.
+
+## Robot hardware, firmware and communication
+
+Parts, wiring, the split between the ESP32 and the SLAM host, all four communication links, the
+message formats, the safety layer and what has and has not been verified are in
+`robot_architecture.md` (PDF: `robot_architecture.pdf`), with the code in `firmware/` and `base_station/`.

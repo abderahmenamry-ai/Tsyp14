@@ -25,9 +25,9 @@ import numpy as np
 
 class ExecutorController:
     DOWNSAMPLE = 2            # planning grid = 2 map px (10 cm at 5 cm/px)
-    INFLATE_M = 0.35          # keep this far from walls when planning
+    INFLATE_M = 0.45          # keep this far from walls when planning (robot radius 0.20 m + margin)
     UNKNOWN_COST = 1.6        # cost of an unknown cell relative to a free cell
-    LOOKAHEAD_M = 0.9         # pure-pursuit look-ahead along the path
+    LOOKAHEAD_M = 0.7         # pure-pursuit look-ahead along the path (short = no corner cutting)
     ROI_MARGIN_M = 8.0        # plan only inside the robot/target box + margin
 
     def __init__(self, cfg, lidar, mission, arrival_radius_m=0.35,
