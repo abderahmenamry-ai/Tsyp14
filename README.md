@@ -68,7 +68,3 @@ Demo recordings: `aess_x_ras/living_map_nav/results/demo.gif` (Writer) and `aess
 ## Known limitations
 
 Documented in `aess_x_ras/architecture/failure_cases.pdf`: SLAM heading drift in featureless corridors, sensor false positives and negatives, radio range underground, frame-translation assumptions, and the fact that everything so far is simulation only.
-
-## Team
-
-*(Add team members and IEEE AESS / RAS / YP membership details here.)*
